@@ -1,0 +1,37 @@
+{
+  "name": "jskit-auth-server",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Reusable authentication helpers for json-rest-api or plain Express apps",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./googleAuthPlugin.js": "./src/googleAuthPlugin.js",
+    "./supabaseAuthPlugin.js": "./src/supabaseAuthPlugin.js",
+    "./jwtAuthPlugin.js": "./src/jwtAuthPlugin.js",
+    "./lib/jwtAuthHelpers.js": "./src/lib/jwtAuthHelpers.js",
+    "./lib/jwtAuthNormalizers/google.js": "./src/lib/jwtAuthNormalizers/google.js",
+    "./lib/jwtAuthNormalizers/supabase.js": "./src/lib/jwtAuthNormalizers/supabase.js",
+    "./plugins/core/google-auth-plugin.js": "./src/googleAuthPlugin.js",
+    "./plugins/core/supabase-auth-plugin.js": "./src/supabaseAuthPlugin.js",
+    "./plugins/core/jwt-auth-plugin.js": "./src/jwtAuthPlugin.js",
+    "./plugins/core/lib/jwt-auth-helpers.js": "./src/lib/jwtAuthHelpers.js",
+    "./plugins/core/lib/jwt-auth-normalizers/google.js": "./src/lib/jwtAuthNormalizers/google.js",
+    "./plugins/core/lib/jwt-auth-normalizers/supabase.js": "./src/lib/jwtAuthNormalizers/supabase.js"
+  },
+  "keywords": ["auth", "json-rest-api", "express", "google", "supabase"],
+  "author": "jskit",
+  "license": "MIT",
+  "dependencies": {
+    "hooked-api": "^1.0.14",
+    "json-rest-api": "^1.0.10",
+    "knex": "^3.1.0",
+    "jose": "^6.1.0"
+  },
+  "peerDependencies": {
+    "express": "^4.0.0 || ^5.0.0",
+    "hooked-api": "*",
+    "json-rest-api": "*",
+    "knex": "*"
+  }
+}
