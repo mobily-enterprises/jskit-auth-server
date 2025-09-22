@@ -19,7 +19,13 @@
     "./plugins/core/lib/jwt-auth-normalizers/google.js": "./src/lib/jwtAuthNormalizers/google.js",
     "./plugins/core/lib/jwt-auth-normalizers/supabase.js": "./src/lib/jwtAuthNormalizers/supabase.js"
   },
-  "keywords": ["auth", "json-rest-api", "express", "google", "supabase"],
+  "keywords": [
+    "auth",
+    "json-rest-api",
+    "express",
+    "google",
+    "supabase"
+  ],
   "author": "jskit",
   "license": "MIT",
   "dependencies": {
