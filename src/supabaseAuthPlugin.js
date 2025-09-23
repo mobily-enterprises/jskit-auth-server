@@ -37,12 +37,35 @@ export const SupabaseAuthPlugin = {
   async install({ api, addHook, log, helpers, pluginOptions }) {
     log.info('Installing Supabase Authentication plugin');
     
+    const resolvedSecret = (() => {
+      const candidate = typeof pluginOptions.secret === 'string'
+        ? pluginOptions.secret.trim()
+        : '';
+      if (candidate) return candidate;
+
+      const fallback = typeof pluginOptions.jwtSecret === 'string'
+        ? pluginOptions.jwtSecret.trim()
+        : '';
+      return fallback;
+    })();
+
+    if (!resolvedSecret) {
+      throw new Error('SupabaseAuthPlugin: secret is required. Provide secret or jwtSecret when installing the plugin.');
+    }
+
+    if (resolvedSecret === 'undefined' || resolvedSecret === 'null') {
+      throw new Error('SupabaseAuthPlugin: secret cannot be the string "undefined" or "null".');
+    }
+
     const config = {
       usersResource: pluginOptions.usersResource || 'users',
-      secret: pluginOptions.secret || pluginOptions.jwtSecret
+      secret: resolvedSecret
     };
     
-    log.debug('Supabase plugin configuration', config);
+    log.debug('Supabase plugin configuration', {
+      ...config,
+      secret: '[redacted]'
+    });
     
     // Register Supabase as an auth provider when JWT plugin asks
     addHook('jwt:register-provider', 'supabase-provider', {}, async ({ context }) => {

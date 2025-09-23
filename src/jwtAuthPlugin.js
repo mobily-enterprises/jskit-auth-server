@@ -156,6 +156,22 @@ export const JwtAuthPlugin = {
         session: jwtOptions.endpoints?.session || false  // e.g., '/auth/session'
       }
     };
+
+    const rawProfileSync = jwtOptions.profile?.syncName ?? 'always';
+    const normalizedProfileSync = typeof rawProfileSync === 'string'
+      ? rawProfileSync.trim().toLowerCase()
+      : 'always';
+    const allowedProfileModes = new Set(['always', 'create-only', 'never']);
+    if (!allowedProfileModes.has(normalizedProfileSync)) {
+      throw new Error('JwtAuthPlugin: profile.syncName must be one of "always", "create-only", or "never"');
+    }
+
+    config.profile = {
+      syncName: normalizedProfileSync
+    };
+
+    const includeNameOnCreate = normalizedProfileSync !== 'never';
+    const includeNameOnUpdate = normalizedProfileSync === 'always';
     
     /* -----------------------------------------------------------------------
      * CONFIGURATION VALIDATION
@@ -431,7 +447,12 @@ export const JwtAuthPlugin = {
                     
                     // If this provider provides additional metadata, update it
                     if (payload.user_metadata) {
-                      updateData.name = payload.user_metadata.name || user.name;
+                      if (includeNameOnUpdate) {
+                        const metadataName = payload.user_metadata.name || user.name;
+                        if (metadataName !== undefined) {
+                          updateData.name = metadataName;
+                        }
+                      }
                       updateData.avatar_url = payload.user_metadata.avatar_url || user.avatar_url;
                       log.trace('Added metadata to update', updateData);
                     }
@@ -795,6 +816,10 @@ export const JwtAuthPlugin = {
           // Remove email from update data - primary email is immutable
           delete updateData.email;
 
+          if (!includeNameOnUpdate) {
+            delete updateData.name;
+          }
+
           // Store provider-specific email if provider is known
           if (provider && userData.email) {
             updateData[`${provider}_email`] = userData.email;
@@ -811,6 +836,10 @@ export const JwtAuthPlugin = {
         } else {
           // Create new user - set both primary email and provider email
           const createData = { ...userData };
+
+          if (!includeNameOnCreate) {
+            delete createData.name;
+          }
 
           // On creation, also set the provider-specific email
           if (provider && userData.email) {
@@ -847,6 +876,10 @@ export const JwtAuthPlugin = {
                   // Update with provider ID if needed - but NOT primary email!
                   const updateData = { ...userData };
                   delete updateData.email;  // Primary email is immutable
+
+                  if (!includeNameOnUpdate) {
+                    delete updateData.name;
+                  }
 
                   if (provider && userData.email) {
                     updateData[`${provider}_email`] = userData.email;

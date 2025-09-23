@@ -165,9 +165,35 @@ export const GoogleAuthPlugin = {
     log.info('Installing Google Authentication plugin');
 
     // GOOGLE-SPECIFIC: Configuration
+    const clientId = pluginOptions.clientId;
+    if (!clientId) {
+      log.warn('GoogleAuthPlugin: No client ID provided, skipping setup');
+      return;
+    }
+
+    const resolvedSessionSecret = (() => {
+      const fromOptions = typeof pluginOptions.sessionSecret === 'string'
+        ? pluginOptions.sessionSecret.trim()
+        : '';
+      if (fromOptions) return fromOptions;
+
+      const fromEnv = typeof process.env.SESSION_SECRET === 'string'
+        ? process.env.SESSION_SECRET.trim()
+        : '';
+      return fromEnv;
+    })();
+
+    if (!resolvedSessionSecret) {
+      throw new Error('GoogleAuthPlugin: sessionSecret is required. Set pluginOptions.sessionSecret or the SESSION_SECRET environment variable.');
+    }
+
+    if (resolvedSessionSecret === 'google-session-secret') {
+      throw new Error('GoogleAuthPlugin: sessionSecret must not use the built-in placeholder value. Provide a unique secret.');
+    }
+
     const config = {
-      clientId: pluginOptions.clientId,
-      sessionSecret: pluginOptions.sessionSecret || process.env.SESSION_SECRET || 'google-session-secret',
+      clientId,
+      sessionSecret: resolvedSessionSecret,
       sessionExpiry: pluginOptions.sessionExpiry || '30d',
       refreshExpiry: pluginOptions.refreshExpiry || '90d',
       usersResource: pluginOptions.usersResource || 'users',
@@ -177,11 +203,6 @@ export const GoogleAuthPlugin = {
         ? pluginOptions.cookieSecure
         : process.env.NODE_ENV === 'production'
     };
-
-    if (!config.clientId) {
-      log.warn('GoogleAuthPlugin: No client ID provided, skipping setup');
-      return;
-    }
 
     // GOOGLE-SPECIFIC: JWKS for Google token verification
     const JWKS = createRemoteJWKSet(new URL(config.jwksUrl));
