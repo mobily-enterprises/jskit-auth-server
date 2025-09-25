@@ -148,11 +148,6 @@ export async function createRevocationResource(api, tableName, log) {
     // Hide from API discovery
     hidden: true
   });
-  
-  // Create table if using Knex
-  if (api.resources[tableName].createKnexTable) {
-    logger.debug(`Revocation resource '${tableName}' exposes createKnexTable; skipping automatic execution.`);
-  }
 }
 
 /**
