@@ -986,18 +986,24 @@ export const JwtAuthPlugin = {
 
       async revokeToken(jti, userId, expiresAt) {
         return revokeToken(jti, userId, expiresAt)
-      },
-
-      cleanup() {
+      }
+    };
+    
+    
+    addHook('release', 'jwt-auth-release-cleanup', {}, async () => {
+      try {
         if (state.cleanupJob) {
           clearInterval(state.cleanupJob)
           state.cleanupJob = null
         }
         state.memoryRevocationStore.clear()
+      } catch (error) {
+        log.error('Failed to run JWT cleanup on release', {
+          error: error?.message || error
+        })
       }
-    };
-    
-    
+    })
+
     /* -----------------------------------------------------------------------
      * OPTIONAL ENDPOINTS
      * 
