@@ -1,6 +1,6 @@
 {
   "name": "jskit-auth-server",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "Reusable authentication helpers for json-rest-api or plain Express apps",
   "main": "index.js",
@@ -29,8 +29,8 @@
   "author": "jskit",
   "license": "MIT",
   "dependencies": {
-    "hooked-api": "^1.0.14",
-    "json-rest-api": "^1.0.10",
+    "hooked-api": "^1.0.22",
+    "json-rest-api": "^1.0.13",
     "knex": "^3.1.0",
     "jose": "^6.1.0"
   },
