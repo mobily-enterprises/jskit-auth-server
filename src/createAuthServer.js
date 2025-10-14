@@ -5,7 +5,7 @@ import {
   RestApiKnexPlugin,
   ExpressPlugin,
   CorsPlugin,
-//  AccessPlugin
+  AccessPlugin
 } from 'json-rest-api'
 import { JwtAuthPlugin } from './jwtAuthPlugin.js'
 import { SupabaseAuthPlugin } from './supabaseAuthPlugin.js'
@@ -14,7 +14,7 @@ import { GoogleAuthPlugin } from './googleAuthPlugin.js'
 const DEFAULT_NAME = 'auth-server'
 const DEFAULT_MOUNT_PATH = '/auth'
 
-function ensureKnex(options) {
+function ensureKnex (options) {
   if (options.knex) return { instance: options.knex, created: false }
   if (!options.knexConfig) {
     throw new Error('mountAuth: provide either knex or knexConfig')
@@ -22,7 +22,7 @@ function ensureKnex(options) {
   return { instance: knexLib(options.knexConfig), created: true }
 }
 
-export async function mountAuth(app, options = {}) {
+export async function mountAuth (app, options = {}) {
   if (!app || typeof app.use !== 'function') {
     throw new Error('mountAuth: an Express app instance is required')
   }
@@ -54,7 +54,7 @@ export async function mountAuth(app, options = {}) {
     restAuthOptions.ownership = { ...jwt.autoOwnership }
   }
 
-	/*
+  /*
   await api.use(AccessPlugin, restAuthOptions)
 */
 
@@ -89,7 +89,7 @@ export async function mountAuth(app, options = {}) {
   return { api, knex: knexInstance }
 }
 
-export async function createAuthApi(options = {}) {
+export async function createAuthApi (options = {}) {
   const {
     name = DEFAULT_NAME,
     rest = {},

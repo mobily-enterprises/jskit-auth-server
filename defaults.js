@@ -10,9 +10,9 @@ export const DEFAULT_CONFIG = {
     revocationTable: 'revoked_refresh_tokens',
     cleanupInterval: 60 * 60 * 1000
   }
-};
+}
 
-export function resolveConfig(options = {}) {
+export function resolveConfig (options = {}) {
   const resolved = {
     basePath: options.basePath || DEFAULT_CONFIG.basePath,
     cookie: {
@@ -25,7 +25,7 @@ export function resolveConfig(options = {}) {
       revocationTable: options.refresh?.revocationTable || DEFAULT_CONFIG.refresh.revocationTable,
       cleanupInterval: options.refresh?.cleanupInterval ?? DEFAULT_CONFIG.refresh.cleanupInterval
     }
-  };
+  }
 
-  return resolved;
+  return resolved
 }

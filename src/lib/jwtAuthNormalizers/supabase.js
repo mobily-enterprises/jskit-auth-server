@@ -15,13 +15,13 @@
  * @param {Object} decodedToken - The decoded JWT payload
  * @returns {Object} Normalized user data
  */
-export function normalizeSupabaseToken(decodedToken) {
+export function normalizeSupabaseToken (decodedToken) {
   if (!decodedToken) {
-    return null;
+    return null
   }
 
   // Extract metadata from Supabase's structure
-  const metadata = decodedToken.raw_user_meta_data || decodedToken.user_metadata || {};
+  const metadata = decodedToken.raw_user_meta_data || decodedToken.user_metadata || {}
 
   return {
     // Standard fields
@@ -48,7 +48,7 @@ export function normalizeSupabaseToken(decodedToken) {
 
     // Keep the raw metadata for provider-specific needs
     raw_metadata: metadata
-  };
+  }
 }
 
 /**
@@ -56,32 +56,32 @@ export function normalizeSupabaseToken(decodedToken) {
  * @param {Object} session - The Supabase session object
  * @returns {Object} Normalized session
  */
-export function normalizeSupabaseSession(session) {
+export function normalizeSupabaseSession (session) {
   if (!session) {
-    return null;
+    return null
   }
 
   // Decode the JWT without verification (frontend can't verify)
-  let decodedToken = null;
+  let decodedToken = null
   try {
-    const base64Payload = session.access_token.split('.')[1];
-    const payload = atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'));
-    decodedToken = JSON.parse(payload);
+    const base64Payload = session.access_token.split('.')[1]
+    const payload = atob(base64Payload.replace(/-/g, '+').replace(/_/g, '/'))
+    decodedToken = JSON.parse(payload)
   } catch (error) {
-    console.error('Failed to decode Supabase token:', error);
+    console.error('Failed to decode Supabase token:', error)
     // Fall back to using session.user data
   }
 
   // If we have a decoded token, use it for normalization
   // Otherwise, try to normalize from session.user
-  let normalizedUser;
+  let normalizedUser
 
   if (decodedToken) {
-    normalizedUser = normalizeSupabaseToken(decodedToken);
+    normalizedUser = normalizeSupabaseToken(decodedToken)
   } else if (session.user) {
     // Fallback: normalize from session.user object
-    const user = session.user;
-    const metadata = user.user_metadata || {};
+    const user = session.user
+    const metadata = user.user_metadata || {}
 
     normalizedUser = {
       email: user.email,
@@ -93,7 +93,7 @@ export function normalizeSupabaseSession(session) {
       role: user.role || 'authenticated',
       created_at: user.created_at,
       updated_at: user.updated_at
-    };
+    }
   }
 
   return {
@@ -106,5 +106,5 @@ export function normalizeSupabaseSession(session) {
     provider_id: decodedToken?.sub || session.user?.id,  // Provider ID at root level
     user: normalizedUser,
     is_anonymous: normalizedUser?.is_anonymous || false
-  };
+  }
 }

@@ -16,13 +16,13 @@
  * @param {Object} decodedToken - The decoded JWT payload (from Google ID token or app JWT)
  * @returns {Object} Normalized user data
  */
-export function normalizeGoogleToken(decodedToken) {
+export function normalizeGoogleToken (decodedToken) {
   if (!decodedToken) {
-    return null;
+    return null
   }
 
   // Handle both Google ID tokens and app-generated JWTs
-  const isGoogleIdToken = decodedToken.iss?.includes('accounts.google.com');
+  const isGoogleIdToken = decodedToken.iss?.includes('accounts.google.com')
 
   if (isGoogleIdToken) {
     // Direct Google ID token
@@ -34,9 +34,9 @@ export function normalizeGoogleToken(decodedToken) {
 
       // Profile fields from Google - construct name from parts if needed
       name: decodedToken.name ||
-            (decodedToken.given_name && decodedToken.family_name ?
-              `${decodedToken.given_name} ${decodedToken.family_name}` :
-              decodedToken.given_name ||
+            (decodedToken.given_name && decodedToken.family_name
+              ? `${decodedToken.given_name} ${decodedToken.family_name}`
+              : decodedToken.given_name ||
               decodedToken.family_name ||
               decodedToken.email?.split('@')[0] ||
               'User'),
@@ -59,7 +59,7 @@ export function normalizeGoogleToken(decodedToken) {
         locale: decodedToken.locale,
         hd: decodedToken.hd
       }
-    };
+    }
   } else {
     // App-generated JWT (from our backend)
     return {
@@ -78,7 +78,7 @@ export function normalizeGoogleToken(decodedToken) {
 
       // Empty metadata for app JWTs
       raw_metadata: {}
-    };
+    }
   }
 }
 
@@ -91,12 +91,12 @@ export function normalizeGoogleToken(decodedToken) {
  * @param {Object} session - The session object from Google auth backend
  * @returns {Object} The session unchanged (already normalized by backend)
  */
-export function normalizeGoogleSession(session) {
+export function normalizeGoogleSession (session) {
   // The backend (/api/auth/google/one-tap) already returns:
   // - Standardized session structure
   // - Normalized user object with linked_providers
   // - All fields in the correct format
   //
   // Just return it as-is
-  return session;
+  return session
 }
