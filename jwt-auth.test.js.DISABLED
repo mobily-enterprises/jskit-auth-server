@@ -132,13 +132,11 @@ describe('JWT Auth Plugin', () => {
   });
 
   after(async () => {
-    // Clean up JWT plugin resources
-    if (api.helpers?.auth?.cleanup) {
-      api.helpers.auth.cleanup();
+    if (typeof api.release === 'function') {
+      await api.release();
+    } else if (knex) {
+      await knex.destroy();
     }
-    
-    // Close database connection to allow tests to exit
-    await knex.destroy();
   });
   
   describe('Basic JWT Authentication', () => {
